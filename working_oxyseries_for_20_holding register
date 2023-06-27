@@ -1,0 +1,52 @@
+#include <ModbusMaster.h>
+
+// Define the Modbus slave address for the OXY-DO Digital Sensor
+#define SLAVE_ADDRESS 1
+
+// Create a ModbusMaster object
+ModbusMaster node;
+
+void setup() {
+  // Start the serial communication for ESP32
+  Serial.begin(9600);
+  
+  // Start the serial communication for RS485 (Serial2)
+  Serial2.begin(9600, SERIAL_8N1, 17, 16);  // TX pin: GPIO17, RX pin: GPIO16
+
+  // Configure the Modbus communication
+  node.begin(SLAVE_ADDRESS, Serial2);
+}
+
+void loop() {
+  // Read holding registers from 0 to 15
+  uint16_t data[16];
+  if (readHoldingRegisters(0, 16, data)) {
+    // Print the register values
+    for (int i = 0; i < 16; i++) {
+      Serial.print("Register ");
+      Serial.print(i);
+      Serial.print(": ");
+      Serial.println(data[i]);
+    }
+  }
+
+  delay(1000);
+}
+
+bool readHoldingRegisters(uint16_t startAddress, uint16_t numRegisters, uint16_t* data) {
+  uint8_t result = node.readHoldingRegisters(startAddress, numRegisters);
+  
+  if (result == node.ku8MBSuccess) {
+    // Copy the data from the response to the provided array
+    for (int i = 0; i < numRegisters; i++) {
+      data[i] = node.getResponseBuffer(i);
+    }
+
+    return true;
+  }
+  else {
+    Serial.print("Modbus Read Error: ");
+    Serial.println(result);
+    return false;
+  }
+}
