@@ -1,0 +1,9 @@
+// # https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv
+ */*DO Meter from analog 4-20mA/rs485 to 0-20ug/L dissolove oxygen level
+Create by Meghnad Halder 
+works on esp32 devkit v1
+setup is created with output pin 2 as a arator output pin and pin 36 anlog is used for input
+rs485 to ttl converter esp32 serial2(TX-17) and RX(16) is used
+either rs485 or 4-20ma is used
+
+*/
